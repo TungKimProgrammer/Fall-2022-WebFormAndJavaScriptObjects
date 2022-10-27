@@ -64,7 +64,7 @@ function specialKeyEventListener(id:string):void{
 function addProduct():void{
     addInputEventToClearErrors();
     if (isAllDataValid()){
-        clearErrMsg();
+        //clearErrMsg();
         let product = getBabyProduct();
         productCount++;
         displayProduct(product);
@@ -79,36 +79,44 @@ function addProduct():void{
 function isAllDataValid():boolean{
     createErrorDisplay();
     addInputEventToClearErrors();
-    let productName = getInputValueByID("product-name").trim();
-    let productPrice = getInputValueByID("product-price").trim();
-    let productRating = getInputValueByID("product-rating").trim();
-    let expirationDate = getInputValueByID("expiration-date").trim();
-    
-    if ( productName !== "" 
-        && productPrice !== "" 
-        && !isNaN(parseFloat(productPrice)) 
-        && parseFloat(productPrice) > 0 
-        && productRating !== "Please choose a rating"
-        && isValidDate(expirationDate)) {
+    let pName = getInputValueByID("product-name").trim();
+    let pPrice = getInputValueByID("product-price").trim();
+
+    // get rating selected index
+    let rating = getByID("product-rating") as HTMLSelectElement | null;
+    let ratingIndex = rating.selectedIndex;
+        
+    //let pRating = getInputValueByID("product-rating");
+    let expDate = getInputValueByID("expiration-date").trim();
+        
+    if ( pName !== "" 
+        && pPrice !== "" 
+        && !isNaN(parseFloat(pPrice)) 
+        && parseFloat(pPrice) > 0 
+        //&& pRating !== "Please choose a rating"
+        && ratingIndex !== 0
+        && isValidDate(expDate)) {
         return true;
     }
     else{
-        if (!isValidDate(expirationDate)){
+        if (!isValidDate(expDate)){
             createErrLI("validationUL", "Format should be mm/dd/yyyy");
         }
 
-        if (productRating == "Please choose a rating") {
+        if (ratingIndex == 0)
+        //if (pRating == "Please choose a rating") 
+        {
             createErrLI("validationUL", "You must choose Product Rating");
         }
 
-        if (productPrice == "") {
+        if (pPrice == "") {
             createErrLI("validationUL", "Product Price can't be empty!");
         }
-        else if (isNaN(parseFloat(productPrice)) || parseFloat(productPrice) <= 0){
+        else if (isNaN(parseFloat(pPrice)) || parseFloat(pPrice) <= 0){
             createErrLI("validationUL", "Product Price must be a valid number!");
         }
 
-        if (productName == "") {
+        if (pName == "") {
             createErrLI("validationUL", "Product Name can't be empty!");
         }
 
@@ -123,6 +131,15 @@ function isAllDataValid():boolean{
  */
 function getByID(id:string){
     return document.getElementById(id);
+}
+
+/**
+ * short version of (<HTMLInputElement>document.getElementById()).value
+ * @param id of input textbox
+ * @returns value of input textbox
+ */
+ function getInputByID(id:string){
+    return (<HTMLInputElement>getByID(id)).value;
 }
 
 /**
@@ -145,21 +162,12 @@ function getBabyProduct():BabyProduct{
     // Populate with data from the form
     product.productName = getInputValueByID("product-name").trim();
     product.productPrice = parseFloat(getInputValueByID("product-price").trim());
-    product.productRating = getInputValueByID("product-rating").trim();
+    product.productRating = getInputValueByID("product-rating");
     product.expirationDate = getInputValueByID("expiration-date").trim();
 
     let onlineOnly = <HTMLInputElement>getByID("online-only");
     product.isOnlineOnly = onlineOnly.checked;
-    /*
-    if(onlineOnly.checked){
-        product.isOnlineOnly = true;
-    }
-    else{
-        product.isOnlineOnly = false;
-    }
-    */
 
-    // return the product
     return product;
     
 }
@@ -173,8 +181,38 @@ function isValidDate(input: string):boolean{
     // Validating mm/dd/yyyy or m/d/yyyy
     // \d{1,2}\/d{1,2}\/d{4}
     let pattern = /^\d{1,2}\/\d{1,2}\/\d{4}$/g;
+    let isCorrectFormat = pattern.test(input);
 
-    return pattern.test(input);
+    return isCorrectFormat;
+}
+
+/**
+ * checks and return expiration status of a product
+ * @param input as expiration date to check status
+ * @returns expiration status of a product
+ */
+function addExpirationStatus(input:string):string{
+    // get month, day, year from string input
+    let month = parseInt(input.substring(0, input.indexOf("/")));
+    let day = parseInt(input.substring(input.indexOf("/") + 1, input.lastIndexOf("/")));
+    let year = parseInt(input.substring(input.lastIndexOf("/") + 1, input.length));
+    
+    let today = new Date();
+
+    // JS counts month from 0, need to subtract 1 from month
+    // day counts at 00:00:00, add 1 to day to count the whole day until mid night
+    let date = new Date(year, month - 1, day + 1);
+    //date.setFullYear(year, month, day);
+    console.log(today);
+    console.log(date);
+
+    if (today > date) {
+        
+        return "expired!";
+    }
+    else {
+        return "unexpired!";
+    }
 }
 
 /**
@@ -182,11 +220,15 @@ function isValidDate(input: string):boolean{
  */
 function createErrorDisplay():void{
     let validationDiv = getByID("error-div");
+    validationDiv.setAttribute("style", "display: flex; \
+                                         justify-content: center; ");
     while (ulErrCount == 0){
         // create and add ul list with product details 
         let createUL = document.createElement("ul");
         createUL.setAttribute("id", "validationUL");
-        createUL.setAttribute("style", "color:red; margin-left: 100px;");
+        createUL.setAttribute("style", "color:red; \
+                                        text-align:left; \
+                                        display: inline-block;");
 
         validationDiv.appendChild(createUL);  
                 
@@ -201,8 +243,10 @@ function createErrorDisplay():void{
  */
 function createErrLI(id: string, s:string):void {
     let createLI = document.createElement("LI");
-    let createLINote = document.createTextNode(s);
-    createLI.appendChild(createLINote);
+    let createSpan = document.createElement("SPAN");
+    let createNote = document.createTextNode(s);
+    createLI.appendChild(createSpan);
+    createSpan.appendChild(createNote);
     getByID(id).appendChild(createLI);
     getByID(id).insertBefore(createLI, getByID(id).children[0]);
 }
@@ -211,7 +255,10 @@ function createErrLI(id: string, s:string):void {
  * clear validation ul
  */
 function clearErrMsg():void{
-    getByID("validationUL").innerHTML = '';
+    if (ulErrCount != 0){
+        getByID("validationUL").innerHTML = "";
+    }
+    
 }
 
 /**
@@ -231,12 +278,16 @@ function displayProduct(myProduct:BabyProduct):void{
     createDisplayFrame();
 
     let displayDiv = getByID("display-div");
+    displayDiv.setAttribute("style", "display: flex; \
+                                      justify-content: center;");
 
     // create and add ul list with product details 
     let ulID = "ul-" + productCount;  
     let createUL = document.createElement("ul");
     createUL.setAttribute("id", ulID);
-    createUL.setAttribute("style", "color:blue; margin-left: 70px;");
+    createUL.setAttribute("style", "color:blue; \
+                                    text-align:left; \
+                                    display: inline-block;");
     displayDiv.appendChild(createUL);
     
     // insert this product to top of display
@@ -249,11 +300,12 @@ function displayProduct(myProduct:BabyProduct):void{
 
     let productCountStr = productCount.toString();
 
-    createLI(ulID, "Product Sequence: ", productCountStr);
+    createLI(ulID, "Product adding order: ", productCountStr);
     createLI(ulID, "Product Name: ", myProduct.productName);
     createLI(ulID, "Product Price: $", myProduct.productPrice.toString());
     createLI(ulID, "Product Rating: ", myProduct.productRating);
     createLI(ulID, "Expiration Date: ", myProduct.expirationDate);
+    createLI(ulID, "Expiration Status: ", addExpirationStatus(myProduct.expirationDate));
     createLI(ulID, "Product Available: ", orderOptions);
     createLI(ulID, "-----------------------", "-----------------------");
 }

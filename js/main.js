@@ -32,7 +32,6 @@ function specialKeyEventListener(id) {
 function addProduct() {
     addInputEventToClearErrors();
     if (isAllDataValid()) {
-        clearErrMsg();
         var product = getBabyProduct();
         productCount++;
         displayProduct(product);
@@ -42,32 +41,33 @@ function addProduct() {
 function isAllDataValid() {
     createErrorDisplay();
     addInputEventToClearErrors();
-    var productName = getInputValueByID("product-name").trim();
-    var productPrice = getInputValueByID("product-price").trim();
-    var productRating = getInputValueByID("product-rating").trim();
-    var expirationDate = getInputValueByID("expiration-date").trim();
-    if (productName !== ""
-        && productPrice !== ""
-        && !isNaN(parseFloat(productPrice))
-        && parseFloat(productPrice) > 0
-        && productRating !== "Please choose a rating"
-        && isValidDate(expirationDate)) {
+    var pName = getInputValueByID("product-name").trim();
+    var pPrice = getInputValueByID("product-price").trim();
+    var rating = getByID("product-rating");
+    var ratingIndex = rating.selectedIndex;
+    var expDate = getInputValueByID("expiration-date").trim();
+    if (pName !== ""
+        && pPrice !== ""
+        && !isNaN(parseFloat(pPrice))
+        && parseFloat(pPrice) > 0
+        && ratingIndex !== 0
+        && isValidDate(expDate)) {
         return true;
     }
     else {
-        if (!isValidDate(expirationDate)) {
+        if (!isValidDate(expDate)) {
             createErrLI("validationUL", "Format should be mm/dd/yyyy");
         }
-        if (productRating == "Please choose a rating") {
+        if (ratingIndex == 0) {
             createErrLI("validationUL", "You must choose Product Rating");
         }
-        if (productPrice == "") {
+        if (pPrice == "") {
             createErrLI("validationUL", "Product Price can't be empty!");
         }
-        else if (isNaN(parseFloat(productPrice)) || parseFloat(productPrice) <= 0) {
+        else if (isNaN(parseFloat(pPrice)) || parseFloat(pPrice) <= 0) {
             createErrLI("validationUL", "Product Price must be a valid number!");
         }
-        if (productName == "") {
+        if (pName == "") {
             createErrLI("validationUL", "Product Name can't be empty!");
         }
         return false;
@@ -76,6 +76,9 @@ function isAllDataValid() {
 function getByID(id) {
     return document.getElementById(id);
 }
+function getInputByID(id) {
+    return getByID(id).value;
+}
 function getInputValueByID(id) {
     return getByID(id).value;
 }
@@ -83,7 +86,7 @@ function getBabyProduct() {
     var product = new BabyProduct();
     product.productName = getInputValueByID("product-name").trim();
     product.productPrice = parseFloat(getInputValueByID("product-price").trim());
-    product.productRating = getInputValueByID("product-rating").trim();
+    product.productRating = getInputValueByID("product-rating");
     product.expirationDate = getInputValueByID("expiration-date").trim();
     var onlineOnly = getByID("online-only");
     product.isOnlineOnly = onlineOnly.checked;
@@ -91,27 +94,51 @@ function getBabyProduct() {
 }
 function isValidDate(input) {
     var pattern = /^\d{1,2}\/\d{1,2}\/\d{4}$/g;
-    return pattern.test(input);
+    var isCorrectFormat = pattern.test(input);
+    return isCorrectFormat;
+}
+function addExpirationStatus(input) {
+    var month = parseInt(input.substring(0, input.indexOf("/")));
+    var day = parseInt(input.substring(input.indexOf("/") + 1, input.lastIndexOf("/")));
+    var year = parseInt(input.substring(input.lastIndexOf("/") + 1, input.length));
+    var today = new Date();
+    var date = new Date(year, month - 1, day + 1);
+    console.log(today);
+    console.log(date);
+    if (today > date) {
+        return "expired!";
+    }
+    else {
+        return "unexpired!";
+    }
 }
 function createErrorDisplay() {
     var validationDiv = getByID("error-div");
+    validationDiv.setAttribute("style", "display: flex; \
+                                         justify-content: center; ");
     while (ulErrCount == 0) {
         var createUL = document.createElement("ul");
         createUL.setAttribute("id", "validationUL");
-        createUL.setAttribute("style", "color:red; margin-left: 100px;");
+        createUL.setAttribute("style", "color:red; \
+                                        text-align:left; \
+                                        display: inline-block;");
         validationDiv.appendChild(createUL);
         ulErrCount++;
     }
 }
 function createErrLI(id, s) {
     var createLI = document.createElement("LI");
-    var createLINote = document.createTextNode(s);
-    createLI.appendChild(createLINote);
+    var createSpan = document.createElement("SPAN");
+    var createNote = document.createTextNode(s);
+    createLI.appendChild(createSpan);
+    createSpan.appendChild(createNote);
     getByID(id).appendChild(createLI);
     getByID(id).insertBefore(createLI, getByID(id).children[0]);
 }
 function clearErrMsg() {
-    getByID("validationUL").innerHTML = '';
+    if (ulErrCount != 0) {
+        getByID("validationUL").innerHTML = "";
+    }
 }
 function addInputEventToClearErrors() {
     getByID("product-name").addEventListener("input", clearErrMsg);
@@ -122,10 +149,14 @@ function addInputEventToClearErrors() {
 function displayProduct(myProduct) {
     createDisplayFrame();
     var displayDiv = getByID("display-div");
+    displayDiv.setAttribute("style", "display: flex; \
+                                      justify-content: center;");
     var ulID = "ul-" + productCount;
     var createUL = document.createElement("ul");
     createUL.setAttribute("id", ulID);
-    createUL.setAttribute("style", "color:blue; margin-left: 70px;");
+    createUL.setAttribute("style", "color:blue; \
+                                    text-align:left; \
+                                    display: inline-block;");
     displayDiv.appendChild(createUL);
     displayDiv.insertBefore(createUL, displayDiv.children[0]);
     var orderOptions = "online and in store.";
@@ -133,11 +164,12 @@ function displayProduct(myProduct) {
         orderOptions = "online only.";
     }
     var productCountStr = productCount.toString();
-    createLI(ulID, "Product Sequence: ", productCountStr);
+    createLI(ulID, "Product adding order: ", productCountStr);
     createLI(ulID, "Product Name: ", myProduct.productName);
     createLI(ulID, "Product Price: $", myProduct.productPrice.toString());
     createLI(ulID, "Product Rating: ", myProduct.productRating);
     createLI(ulID, "Expiration Date: ", myProduct.expirationDate);
+    createLI(ulID, "Expiration Status: ", addExpirationStatus(myProduct.expirationDate));
     createLI(ulID, "Product Available: ", orderOptions);
     createLI(ulID, "-----------------------", "-----------------------");
 }

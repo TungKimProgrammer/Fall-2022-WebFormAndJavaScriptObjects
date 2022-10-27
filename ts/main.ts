@@ -16,6 +16,7 @@ myProduct.isOnlineOnly = false;
 
 var legendCount = 0;
 var productCount = 0;
+var ulErrCount = 0;
 
 window.onload = function(){
     let addBtn = <HTMLElement>document.getElementById("addButton");
@@ -27,6 +28,7 @@ function addProduct(){
         let product = getBabyProduct();
         productCount++;
         displayProduct(product);
+        (<HTMLFormElement>getByID("myForm")).reset();
     }
 }
 
@@ -61,9 +63,10 @@ function displayProduct(myProduct:BabyProduct):void{
     // add <p> for productInfo in the <div id="display-error-msg">
     // displayDiv.appendChild(productInfo);
 
-    // create and add ul list with product details    
+    // create and add ul list with product details 
+    let ulID = "ul-" + productCount;  
     let createUL = document.createElement("ul");
-    createUL.setAttribute("id", "ul-" + productCount);
+    createUL.setAttribute("id", ulID);
     displayDiv.appendChild(createUL);
     
     // insert this product to top of display
@@ -80,13 +83,13 @@ function displayProduct(myProduct:BabyProduct):void{
 
     let productCountStr = productCount.toString();
 
-    createLI(productCountStr, "Product Sequence: ", productCountStr);
-    createLI(productCountStr, "Product Name: ", myProduct.productName);
-    createLI(productCountStr, "Product Price: $", myProduct.productPrice.toString());
-    createLI(productCountStr, "Product Rating: ", myProduct.productRating);
-    createLI(productCountStr, "Expiration Date: ", myProduct.expirationDate);
-    createLI(productCountStr, "Product Available: ", orderOptions);
-    createLI(productCountStr, "-----------------------", "-----------------------");
+    createLI(ulID, "Product Sequence: ", productCountStr);
+    createLI(ulID, "Product Name: ", myProduct.productName);
+    createLI(ulID, "Product Price: $", myProduct.productPrice.toString());
+    createLI(ulID, "Product Rating: ", myProduct.productRating);
+    createLI(ulID, "Expiration Date: ", myProduct.expirationDate);
+    createLI(ulID, "Product Available: ", orderOptions);
+    createLI(ulID, "-----------------------", "-----------------------");
     /*
     let createLI = document.createElement("LI");
     let createLINote = document.createTextNode("Product Name: " + myProduct.productName);
@@ -106,7 +109,7 @@ function createLI(id: string, a:string, b:string):void {
     let createLI = document.createElement("LI");
     let createLINote = document.createTextNode(a + b);
     createLI.appendChild(createLINote);
-    getByID("ul-" + id).appendChild(createLI);
+    getByID(id).appendChild(createLI);
 }
 
 function createDisplayFrame():void{
@@ -137,6 +140,7 @@ function createDisplayFrame():void{
 
 // add validation code
 function isAllDataValid(){
+
     return true;
 }
 
@@ -196,11 +200,37 @@ function getValidDate(id:string):string {
     let dateBox = <HTMLInputElement>getByID(id);
     let dateBoxValue = dateBox.value;
 
-    /*
+    
     if (!isValidDate(dateBoxValue)) {
         let errSpan = dateBox.nextElementSibling;
         errSpan.innerHTML = "Format should be mm/dd/yyyy";
     }
-    */
+    
     return dateBoxValue;
+}
+
+function createErrorDisplay():void{
+    while (ulErrCount == 0){
+        // create and add fieldset to form to display Products
+        let createFieldset = document.createElement("FIELDSET");
+        document.body.appendChild(createFieldset).setAttribute("id","display-fieldset");
+        
+        let inventoryFieldset = getByID("display-fieldset");
+
+        // create <legend>Inventory</legend>
+        // add <legend>Inventory</legend> in the <fieldset id="inventory">
+        let createLegend = document.createElement("LEGEND");
+        let createTitle = document.createTextNode("Products added:");
+
+        createLegend.appendChild(createTitle);
+
+        inventoryFieldset.appendChild(createLegend)
+                         .setAttribute("id","display-legend");
+
+        let createDiv = document.createElement("div");
+        inventoryFieldset.appendChild(createDiv)
+                         .setAttribute("id","display-div");
+            
+        ulErrCount++;
+    }
 }

@@ -11,6 +11,7 @@ myProduct.expirationDate = "01/03/2024";
 myProduct.isOnlineOnly = false;
 var legendCount = 0;
 var productCount = 0;
+var ulErrCount = 0;
 window.onload = function () {
     var addBtn = document.getElementById("addButton");
     addBtn.onclick = addProduct;
@@ -20,6 +21,7 @@ function addProduct() {
         var product = getBabyProduct();
         productCount++;
         displayProduct(product);
+        getByID("myForm").reset();
     }
 }
 function displayProduct(myProduct) {
@@ -28,8 +30,9 @@ function displayProduct(myProduct) {
     var productHeading = document.createElement("h2");
     productHeading.innerText = myProduct.productName;
     displayDiv.appendChild(productHeading);
+    var ulID = "ul-" + productCount;
     var createUL = document.createElement("ul");
-    createUL.setAttribute("id", "ul-" + productCount);
+    createUL.setAttribute("id", ulID);
     displayDiv.appendChild(createUL);
     displayDiv.insertBefore(createUL, displayDiv.children[0]);
     var orderOptions = "online and in store.";
@@ -40,19 +43,19 @@ function displayProduct(myProduct) {
         myProduct.productRating = "Rating being updated";
     }
     var productCountStr = productCount.toString();
-    createLI(productCountStr, "Product Sequence: ", productCountStr);
-    createLI(productCountStr, "Product Name: ", myProduct.productName);
-    createLI(productCountStr, "Product Price: $", myProduct.productPrice.toString());
-    createLI(productCountStr, "Product Rating: ", myProduct.productRating);
-    createLI(productCountStr, "Expiration Date: ", myProduct.expirationDate);
-    createLI(productCountStr, "Product Available: ", orderOptions);
-    createLI(productCountStr, "-----------------------", "-----------------------");
+    createLI(ulID, "Product Sequence: ", productCountStr);
+    createLI(ulID, "Product Name: ", myProduct.productName);
+    createLI(ulID, "Product Price: $", myProduct.productPrice.toString());
+    createLI(ulID, "Product Rating: ", myProduct.productRating);
+    createLI(ulID, "Expiration Date: ", myProduct.expirationDate);
+    createLI(ulID, "Product Available: ", orderOptions);
+    createLI(ulID, "-----------------------", "-----------------------");
 }
 function createLI(id, a, b) {
     var createLI = document.createElement("LI");
     var createLINote = document.createTextNode(a + b);
     createLI.appendChild(createLINote);
-    getByID("ul-" + id).appendChild(createLI);
+    getByID(id).appendChild(createLI);
 }
 function createDisplayFrame() {
     while (legendCount == 0) {
@@ -93,5 +96,25 @@ function isValidDate(input) {
 function getValidDate(id) {
     var dateBox = getByID(id);
     var dateBoxValue = dateBox.value;
+    if (!isValidDate(dateBoxValue)) {
+        var errSpan = dateBox.nextElementSibling;
+        errSpan.innerHTML = "Format should be mm/dd/yyyy";
+    }
     return dateBoxValue;
+}
+function createErrorDisplay() {
+    while (ulErrCount == 0) {
+        var createFieldset = document.createElement("FIELDSET");
+        document.body.appendChild(createFieldset).setAttribute("id", "display-fieldset");
+        var inventoryFieldset = getByID("display-fieldset");
+        var createLegend = document.createElement("LEGEND");
+        var createTitle = document.createTextNode("Products added:");
+        createLegend.appendChild(createTitle);
+        inventoryFieldset.appendChild(createLegend)
+            .setAttribute("id", "display-legend");
+        var createDiv = document.createElement("div");
+        inventoryFieldset.appendChild(createDiv)
+            .setAttribute("id", "display-div");
+        ulErrCount++;
+    }
 }

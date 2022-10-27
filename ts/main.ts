@@ -323,7 +323,7 @@ function displayProduct(myProduct:BabyProduct):void{
 function changeTextColor(id:string, wordToChange:string, newWord:string, color:string){
     var element = getByID(id); 
     var originalHtml = element.innerHTML;
-    var newHtml = originalHtml.replace(new RegExp(wordToChange, "g"), newWord.fontcolor(color));
+    var newHtml = originalHtml.replace(new RegExp('\\b' + wordToChange + '\\b', "g"), newWord.fontcolor(color));
     element.innerHTML = newHtml;
 }
 

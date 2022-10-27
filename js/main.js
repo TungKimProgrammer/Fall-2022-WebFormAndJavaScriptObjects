@@ -1,13 +1,10 @@
-var BabyProduct = (function () {
-    function BabyProduct() {
-    }
-    return BabyProduct;
-}());
+class BabyProduct {
+}
 var legendCount = 0;
 var productCount = 0;
 var ulErrCount = 0;
 window.onload = function () {
-    var addBtn = getByID("addButton");
+    let addBtn = getByID("addButton");
     addBtn.addEventListener("click", clearErrMsg);
     addBtn.addEventListener("click", addProduct);
     specialKeyEventListener("product-name");
@@ -15,8 +12,8 @@ window.onload = function () {
     specialKeyEventListener("expiration-date");
 };
 function specialKeyEventListener(id) {
-    var input = getByID(id);
-    var addBtn = getByID("addButton");
+    let input = getByID(id);
+    let addBtn = getByID("addButton");
     input.addEventListener("keyup", function (event) {
         if (event.key === "Enter") {
             event.preventDefault();
@@ -32,7 +29,7 @@ function specialKeyEventListener(id) {
 function addProduct() {
     addInputEventToClearErrors();
     if (isAllDataValid()) {
-        var product = getBabyProduct();
+        let product = getBabyProduct();
         productCount++;
         displayProduct(product);
         getByID("myForm").reset();
@@ -41,11 +38,11 @@ function addProduct() {
 function isAllDataValid() {
     createErrorDisplay();
     addInputEventToClearErrors();
-    var pName = getInputValueByID("product-name").trim();
-    var pPrice = getInputValueByID("product-price").trim();
-    var rating = getByID("product-rating");
-    var ratingIndex = rating.selectedIndex;
-    var expDate = getInputValueByID("expiration-date").trim();
+    let pName = getInputValueByID("product-name").trim();
+    let pPrice = getInputValueByID("product-price").trim();
+    let rating = getByID("product-rating");
+    let ratingIndex = rating.selectedIndex;
+    let expDate = getInputValueByID("expiration-date").trim();
     if (pName !== ""
         && pPrice !== ""
         && !isNaN(parseFloat(pPrice))
@@ -83,26 +80,26 @@ function getInputValueByID(id) {
     return getByID(id).value;
 }
 function getBabyProduct() {
-    var product = new BabyProduct();
+    let product = new BabyProduct();
     product.productName = getInputValueByID("product-name").trim();
     product.productPrice = parseFloat(getInputValueByID("product-price").trim());
     product.productRating = getInputValueByID("product-rating");
     product.expirationDate = getInputValueByID("expiration-date").trim();
-    var onlineOnly = getByID("online-only");
+    let onlineOnly = getByID("online-only");
     product.isOnlineOnly = onlineOnly.checked;
     return product;
 }
 function isValidDate(input) {
-    var pattern = /^\d{1,2}\/\d{1,2}\/\d{4}$/g;
-    var isCorrectFormat = pattern.test(input);
+    let pattern = /^\d{1,2}\/\d{1,2}\/\d{4}$/g;
+    let isCorrectFormat = pattern.test(input);
     return isCorrectFormat;
 }
 function addExpirationStatus(input) {
-    var month = parseInt(input.substring(0, input.indexOf("/")));
-    var day = parseInt(input.substring(input.indexOf("/") + 1, input.lastIndexOf("/")));
-    var year = parseInt(input.substring(input.lastIndexOf("/") + 1, input.length));
-    var today = new Date();
-    var date = new Date(year, month - 1, day + 1);
+    let month = parseInt(input.substring(0, input.indexOf("/")));
+    let day = parseInt(input.substring(input.indexOf("/") + 1, input.lastIndexOf("/")));
+    let year = parseInt(input.substring(input.lastIndexOf("/") + 1, input.length));
+    let today = new Date();
+    let date = new Date(year, month - 1, day + 1);
     console.log(today);
     console.log(date);
     if (today > date) {
@@ -113,11 +110,11 @@ function addExpirationStatus(input) {
     }
 }
 function createErrorDisplay() {
-    var validationDiv = getByID("error-div");
+    let validationDiv = getByID("error-div");
     validationDiv.setAttribute("style", "display: flex; \
                                          justify-content: center; ");
     while (ulErrCount == 0) {
-        var createUL = document.createElement("ul");
+        let createUL = document.createElement("ul");
         createUL.setAttribute("id", "validationUL");
         createUL.setAttribute("style", "color:red; \
                                         text-align:left; \
@@ -127,9 +124,9 @@ function createErrorDisplay() {
     }
 }
 function createErrLI(id, s) {
-    var createLI = document.createElement("LI");
-    var createSpan = document.createElement("SPAN");
-    var createNote = document.createTextNode(s);
+    let createLI = document.createElement("LI");
+    let createSpan = document.createElement("SPAN");
+    let createNote = document.createTextNode(s);
     createLI.appendChild(createSpan);
     createSpan.appendChild(createNote);
     getByID(id).appendChild(createLI);
@@ -148,22 +145,22 @@ function addInputEventToClearErrors() {
 }
 function displayProduct(myProduct) {
     createDisplayFrame();
-    var displayDiv = getByID("display-div");
+    let displayDiv = getByID("display-div");
     displayDiv.setAttribute("style", "display: flex; \
                                       justify-content: center;");
-    var ulID = "ul-" + productCount;
-    var createUL = document.createElement("ul");
+    let ulID = "ul-" + productCount;
+    let createUL = document.createElement("ul");
     createUL.setAttribute("id", ulID);
     createUL.setAttribute("style", "color:blue; \
                                     text-align:left; \
                                     display: inline-block;");
     displayDiv.appendChild(createUL);
     displayDiv.insertBefore(createUL, displayDiv.children[0]);
-    var orderOptions = "online and in store.";
+    let orderOptions = "online and in store.";
     if (myProduct.isOnlineOnly) {
         orderOptions = "online only.";
     }
-    var productCountStr = productCount.toString();
+    let productCountStr = productCount.toString();
     createLI(ulID, "Product adding order: ", productCountStr);
     createLI(ulID, "Product Name: ", myProduct.productName);
     createLI(ulID, "Product Price: $", myProduct.productPrice.toString());
@@ -177,26 +174,26 @@ function displayProduct(myProduct) {
 function changeTextColor(id, wordToChange, newWord, color) {
     var element = getByID(id);
     var originalHtml = element.innerHTML;
-    var newHtml = originalHtml.replace(new RegExp(wordToChange, "g"), newWord.fontcolor(color));
+    var newHtml = originalHtml.replace(new RegExp('\\b' + wordToChange + '\\b', "g"), newWord.fontcolor(color));
     element.innerHTML = newHtml;
 }
 function createLI(id, a, b) {
-    var createLI = document.createElement("LI");
-    var createLINote = document.createTextNode(a + b);
+    let createLI = document.createElement("LI");
+    let createLINote = document.createTextNode(a + b);
     createLI.appendChild(createLINote);
     getByID(id).appendChild(createLI);
 }
 function createDisplayFrame() {
     while (legendCount == 0) {
-        var createFieldset = document.createElement("FIELDSET");
+        let createFieldset = document.createElement("FIELDSET");
         document.body.appendChild(createFieldset).setAttribute("id", "display-fieldset");
-        var inventoryFieldset = getByID("display-fieldset");
-        var createLegend = document.createElement("LEGEND");
-        var createTitle = document.createTextNode("Products added:");
+        let inventoryFieldset = getByID("display-fieldset");
+        let createLegend = document.createElement("LEGEND");
+        let createTitle = document.createTextNode("Products added:");
         createLegend.appendChild(createTitle);
         inventoryFieldset.appendChild(createLegend)
             .setAttribute("id", "display-legend");
-        var createDiv = document.createElement("div");
+        let createDiv = document.createElement("div");
         inventoryFieldset.appendChild(createDiv)
             .setAttribute("id", "display-div");
         legendCount++;

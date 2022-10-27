@@ -308,6 +308,23 @@ function displayProduct(myProduct:BabyProduct):void{
     createLI(ulID, "Expiration Status: ", addExpirationStatus(myProduct.expirationDate));
     createLI(ulID, "Product Available: ", orderOptions);
     createLI(ulID, "-----------------------", "-----------------------");
+
+    // change word "expired" to red color
+    changeTextColor(ulID, "expired!", "EXPIRED!", "red"); 
+    
+}
+
+/** not Recommended as String.fontcolor() is deprecated in JavaScript.
+ * change color of specific words
+ * @param id of the HTMLElement
+ * @param wordToChange is word needs to change color
+ * @param color 
+ */
+function changeTextColor(id:string, wordToChange:string, newWord:string, color:string){
+    var element = getByID(id); 
+    var originalHtml = element.innerHTML;
+    var newHtml = originalHtml.replace(new RegExp(wordToChange, "g"), newWord.fontcolor(color));
+    element.innerHTML = newHtml;
 }
 
 /**

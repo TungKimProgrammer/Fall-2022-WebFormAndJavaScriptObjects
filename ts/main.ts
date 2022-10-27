@@ -6,144 +6,79 @@ class BabyProduct{
     isOnlineOnly: boolean;
 }
 
-//test code
-let myProduct = new BabyProduct();
-myProduct.productName = "Similac";
-myProduct.productPrice = 29;
-myProduct.productRating = "★★★★★";
-myProduct.expirationDate = "01/03/2024";
-myProduct.isOnlineOnly = false;
-
 var legendCount = 0;
 var productCount = 0;
 var ulErrCount = 0;
 
 window.onload = function(){
     let addBtn = <HTMLElement>document.getElementById("addButton");
+    addBtn.onclick = clearErrMsg;
     addBtn.onclick = addProduct;
 }
 
+/**
+ * add product to database when all conditions are met
+ */
 function addProduct(){
+    
+
     if (isAllDataValid()){
+        clearErrMsg();
         let product = getBabyProduct();
         productCount++;
         displayProduct(product);
         (<HTMLFormElement>getByID("myForm")).reset();
     }
+
+    // prevents displaying repeated error messages
+    if (getByID("validationUL").getElementsByTagName("li").length > 3){
+        clearErrMsg();
+    }
 }
 
-// display Product
-function displayProduct(myProduct:BabyProduct):void{
-    // create a fieldset to display products added
-    createDisplayFrame();
-
-    let displayDiv = getByID("display-div");
-
+/**
+ * check validation of input data
+ * @returns true if all data is valid
+ */
+function isAllDataValid():boolean{
+    createErrorDisplay();
+    addInputEventToClearErrors();
+    let productName = (<HTMLInputElement>getByID("product-name")).value.trim();
+    let productPrice = (<HTMLInputElement>getByID("product-price")).value.trim();
+    let expirationDate = (<HTMLInputElement>getByID("expiration-date")).value.trim();
     
-
-    // create <h2> for Product Name
-    let productHeading = document.createElement("h2");
-    productHeading.innerText = myProduct.productName;
-        
-/*
-    // create paragraph with product details
-    let productInfo = document.createElement("p");
-    let orderOptions = "online and in store.";
-    if (myProduct.isOnlineOnly){
-        orderOptions = "online only.";
+    if ( productName !== "" 
+        && productPrice !== "" 
+        && !isNaN(parseFloat(productPrice)) 
+        && parseFloat(productPrice) > 0 
+        && isValidDate(expirationDate)) {
+        return true;
     }
-    productInfo.innerText = myProduct.productName 
-                          + " has a rating of " + myProduct.productRating
-                          + ". It costs $" + myProduct.productPrice
-                          + ". Available " + orderOptions;
-*/
-    // add <h2> in the <div id="display-error-msg">
-    displayDiv.appendChild(productHeading);
+    else{
+        if (!isValidDate(expirationDate)){
+            createErrLI("validationUL", "Format should be mm/dd/yyyy");
+        }
 
-    // add <p> for productInfo in the <div id="display-error-msg">
-    // displayDiv.appendChild(productInfo);
+        if (productPrice == "") {
+            createErrLI("validationUL", "Product Price can't be empty!");
+        }
+        else if (isNaN(parseFloat(productPrice)) || parseFloat(productPrice) <= 0){
+            createErrLI("validationUL", "Product Price must be a valid number!");
+        }
 
-    // create and add ul list with product details 
-    let ulID = "ul-" + productCount;  
-    let createUL = document.createElement("ul");
-    createUL.setAttribute("id", ulID);
-    displayDiv.appendChild(createUL);
+        if (productName == "") {
+            createErrLI("validationUL", "Product Name can't be empty!");
+        }
+
+        return false;
+    }
     
-    // insert this product to top of display
-    displayDiv.insertBefore(createUL, displayDiv.children[0]);
-
-    let orderOptions = "online and in store.";
-    if (myProduct.isOnlineOnly){
-        orderOptions = "online only.";
-    }
-
-    if (myProduct.productRating == "Please choose a rating"){
-        myProduct.productRating = "Rating being updated";
-    }
-
-    let productCountStr = productCount.toString();
-
-    createLI(ulID, "Product Sequence: ", productCountStr);
-    createLI(ulID, "Product Name: ", myProduct.productName);
-    createLI(ulID, "Product Price: $", myProduct.productPrice.toString());
-    createLI(ulID, "Product Rating: ", myProduct.productRating);
-    createLI(ulID, "Expiration Date: ", myProduct.expirationDate);
-    createLI(ulID, "Product Available: ", orderOptions);
-    createLI(ulID, "-----------------------", "-----------------------");
-    /*
-    let createLI = document.createElement("LI");
-    let createLINote = document.createTextNode("Product Name: " + myProduct.productName);
-    createLI.appendChild(createLINote);
-    getByID("ul-"+productCount).appendChild(createLI);
-    */
-
-    /*
-    productInfo.innerText = myProduct.productName 
-                          + " has a rating of " + myProduct.productRating
-                          + ". It costs $" + myProduct.productPrice
-                          + ". Available " + orderOptions;
-    */
+    
 }
 
-function createLI(id: string, a:string, b:string):void {
-    let createLI = document.createElement("LI");
-    let createLINote = document.createTextNode(a + b);
-    createLI.appendChild(createLINote);
-    getByID(id).appendChild(createLI);
-}
-
-function createDisplayFrame():void{
-    while (legendCount == 0){
-        // create and add fieldset to form to display Products
-        let createFieldset = document.createElement("FIELDSET");
-        document.body.appendChild(createFieldset).setAttribute("id","display-fieldset");
-        
-        let inventoryFieldset = getByID("display-fieldset");
-
-        // create <legend>Inventory</legend>
-        // add <legend>Inventory</legend> in the <fieldset id="inventory">
-        let createLegend = document.createElement("LEGEND");
-        let createTitle = document.createTextNode("Products added:");
-
-        createLegend.appendChild(createTitle);
-
-        inventoryFieldset.appendChild(createLegend)
-                         .setAttribute("id","display-legend");
-
-        let createDiv = document.createElement("div");
-        inventoryFieldset.appendChild(createDiv)
-                         .setAttribute("id","display-div");
-            
-        legendCount++;
-    }
-}
-
-// add validation code
-function isAllDataValid(){
-
-    return true;
-}
-
+/**
+ * short version of document.getEmlementById();
+ */
 function getByID(id:string){
     return document.getElementById(id);
 }
@@ -202,15 +137,112 @@ function getValidDate(id:string):string {
 
     
     if (!isValidDate(dateBoxValue)) {
-        let errSpan = dateBox.nextElementSibling;
-        errSpan.innerHTML = "Format should be mm/dd/yyyy";
+        createErrLI("validationUL", "Format should be mm/dd/yyyy");
     }
     
     return dateBoxValue;
 }
 
+/**
+ * create ul to display error messages
+ */
 function createErrorDisplay():void{
+    let validationDiv = getByID("error-div");
     while (ulErrCount == 0){
+        // create and add ul list with product details 
+        let createUL = document.createElement("ul");
+        createUL.setAttribute("id", "validationUL");
+        createUL.setAttribute("style", "color:red; text-align: center;");
+
+        validationDiv.appendChild(createUL);  
+                
+        ulErrCount++;
+    }
+}
+
+/**
+ * create error message line
+ * @param id of validation ul
+ * @param s message to display
+ */
+function createErrLI(id: string, s:string):void {
+    let createLI = document.createElement("LI");
+    let createLINote = document.createTextNode(s);
+    createLI.appendChild(createLINote);
+    getByID(id).appendChild(createLI);
+    getByID(id).insertBefore(createLI, getByID(id).children[0]);
+}
+
+/**
+ * clear validation ul
+ */
+function clearErrMsg():void{
+    getByID("validationUL").innerHTML = '';
+}
+
+/**
+ * function that clears error messages user starts typing 
+ */
+ function addInputEventToClearErrors() {
+    getByID("product-name").addEventListener("input", clearErrMsg);
+    getByID("product-price").addEventListener("input", clearErrMsg);
+}
+
+// display Product
+function displayProduct(myProduct:BabyProduct):void{
+    // create a fieldset to display products added
+    createDisplayFrame();
+
+    let displayDiv = getByID("display-div");
+
+    // create and add ul list with product details 
+    let ulID = "ul-" + productCount;  
+    let createUL = document.createElement("ul");
+    createUL.setAttribute("id", ulID);
+    displayDiv.appendChild(createUL);
+    
+    // insert this product to top of display
+    displayDiv.insertBefore(createUL, displayDiv.children[0]);
+
+    let orderOptions = "online and in store.";
+    if (myProduct.isOnlineOnly){
+        orderOptions = "online only.";
+    }
+
+    if (myProduct.productRating == "Please choose a rating"){
+        myProduct.productRating = "Rating being updated";
+    }
+
+    let productCountStr = productCount.toString();
+
+    createLI(ulID, "Product Sequence: ", productCountStr);
+    createLI(ulID, "Product Name: ", myProduct.productName);
+    createLI(ulID, "Product Price: $", myProduct.productPrice.toString());
+    createLI(ulID, "Product Rating: ", myProduct.productRating);
+    createLI(ulID, "Expiration Date: ", myProduct.expirationDate);
+    createLI(ulID, "Product Available: ", orderOptions);
+    createLI(ulID, "-----------------------", "-----------------------");
+}
+
+/**
+ * create li line to display product info
+ * @param id of ul of current product
+ * @param a Title/Field such as Product Name
+ * @param b name of specific product
+ */
+function createLI(id: string, a:string, b:string):void {
+    let createLI = document.createElement("LI");
+    let createLINote = document.createTextNode(a + b);
+    createLI.appendChild(createLINote);
+    getByID(id).appendChild(createLI);
+}
+
+/**
+ * create fieldset to display products added,
+ * the last one show on top of the list
+ */
+function createDisplayFrame():void{
+    while (legendCount == 0){
         // create and add fieldset to form to display Products
         let createFieldset = document.createElement("FIELDSET");
         document.body.appendChild(createFieldset).setAttribute("id","display-fieldset");
@@ -231,6 +263,6 @@ function createErrorDisplay():void{
         inventoryFieldset.appendChild(createDiv)
                          .setAttribute("id","display-div");
             
-        ulErrCount++;
+        legendCount++;
     }
 }

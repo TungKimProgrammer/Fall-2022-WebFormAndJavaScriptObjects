@@ -177,8 +177,9 @@ function clearErrMsg():void{
  function addInputEventToClearErrors() {
     getByID("product-name").addEventListener("input", clearErrMsg);
     getByID("product-price").addEventListener("input", clearErrMsg);
+    getByID("product-rating").addEventListener("input", clearErrMsg);
     getByID("expiration-date").addEventListener("input", clearErrMsg);
-    getByID("addButton").addEventListener("click", clearErrMsg);
+    
 }
 
 // display Product

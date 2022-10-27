@@ -42,10 +42,10 @@ function addProduct() {
 function isAllDataValid() {
     createErrorDisplay();
     addInputEventToClearErrors();
-    var productName = getByID("product-name").value.trim();
-    var productPrice = getByID("product-price").value.trim();
-    var productRating = getByID("product-rating").value.trim();
-    var expirationDate = getByID("expiration-date").value.trim();
+    var productName = getInputValueByID("product-name").trim();
+    var productPrice = getInputValueByID("product-price").trim();
+    var productRating = getInputValueByID("product-rating").trim();
+    var expirationDate = getInputValueByID("expiration-date").trim();
     if (productName !== ""
         && productPrice !== ""
         && !isNaN(parseFloat(productPrice))
@@ -76,12 +76,15 @@ function isAllDataValid() {
 function getByID(id) {
     return document.getElementById(id);
 }
+function getInputValueByID(id) {
+    return getByID(id).value;
+}
 function getBabyProduct() {
     var product = new BabyProduct();
-    product.productName = getByID("product-name").value.trim();
-    product.productPrice = parseFloat(getByID("product-price").value.trim());
-    product.productRating = getByID("product-rating").value.trim();
-    product.expirationDate = getByID("expiration-date").value.trim();
+    product.productName = getInputValueByID("product-name").trim();
+    product.productPrice = parseFloat(getInputValueByID("product-price").trim());
+    product.productRating = getInputValueByID("product-rating").trim();
+    product.expirationDate = getInputValueByID("expiration-date").trim();
     var onlineOnly = getByID("online-only");
     product.isOnlineOnly = onlineOnly.checked;
     return product;

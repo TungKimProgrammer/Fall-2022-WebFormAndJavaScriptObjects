@@ -36,7 +36,7 @@ window.onload = function(){
  * @param event of key pressed
  */
 function specialKeyEventListener(id:string):void{
-    let input = <HTMLElement>getByID(id);
+    let input = <HTMLInputElement>getByID(id);
     let addBtn = <HTMLElement>getByID("addButton");
     // Execute a function when the user presses a key on the keyboard
     input.addEventListener("keyup", function(event){
@@ -79,10 +79,10 @@ function addProduct():void{
 function isAllDataValid():boolean{
     createErrorDisplay();
     addInputEventToClearErrors();
-    let productName = (<HTMLInputElement>getByID("product-name")).value.trim();
-    let productPrice = (<HTMLInputElement>getByID("product-price")).value.trim();
-    let productRating = (<HTMLSelectElement>getByID("product-rating")).value.trim();
-    let expirationDate = (<HTMLInputElement>getByID("expiration-date")).value.trim();
+    let productName = getInputValueByID("product-name").trim();
+    let productPrice = getInputValueByID("product-price").trim();
+    let productRating = getInputValueByID("product-rating").trim();
+    let expirationDate = getInputValueByID("expiration-date").trim();
     
     if ( productName !== "" 
         && productPrice !== "" 
@@ -117,10 +117,21 @@ function isAllDataValid():boolean{
 }
 
 /**
- * short version of document.getEmlementById();
+ * short version of document.getElementById()
+ * @param id of input textbox
+ * @returns document.getElementById(id); 
  */
 function getByID(id:string){
     return document.getElementById(id);
+}
+
+/**
+ * short version of (<HTMLInputElement>document.getElementById()).value
+ * @param id of input textbox
+ * @returns value of input textbox
+ */
+function getInputValueByID(id:string){
+    return (<HTMLInputElement>getByID(id)).value;
 }
 
 /**
@@ -132,10 +143,10 @@ function getBabyProduct():BabyProduct{
     let product = new BabyProduct();
 
     // Populate with data from the form
-    product.productName = (<HTMLInputElement>getByID("product-name")).value.trim();
-    product.productPrice = parseFloat((<HTMLInputElement>getByID("product-price")).value.trim());
-    product.productRating = (<HTMLSelectElement>getByID("product-rating")).value.trim();
-    product.expirationDate = (<HTMLInputElement>getByID("expiration-date")).value.trim();
+    product.productName = getInputValueByID("product-name").trim();
+    product.productPrice = parseFloat(getInputValueByID("product-price").trim());
+    product.productRating = getInputValueByID("product-rating").trim();
+    product.expirationDate = getInputValueByID("expiration-date").trim();
 
     let onlineOnly = <HTMLInputElement>getByID("online-only");
     product.isOnlineOnly = onlineOnly.checked;

@@ -12,12 +12,17 @@ var productCount = 0;
 var ulErrCount = 0;
 
 window.onload = function(){
-    let addBtn = <HTMLElement>document.getElementById("addButton");
+    let addBtn = <HTMLElement>getByID("addButton");
     //addBtn.onclick = addProduct;
 
     addBtn.addEventListener("click", clearErrMsg);
     addBtn.addEventListener("click", addProduct);
 
+    // button clicked when 'Enter' key pressed
+    // form reset and err msg cleared when 'ESC' key pressed
+    specialKeyEventListener("product-name");
+    specialKeyEventListener("product-price");
+    specialKeyEventListener("expiration-date");
 /*
     addBtn.onclick = () => {
         clearErrMsg();
@@ -27,9 +32,36 @@ window.onload = function(){
 }
 
 /**
+ * execute functions when particular key entered
+ * @param event of key pressed
+ */
+function specialKeyEventListener(id:string):void{
+    let input = <HTMLElement>getByID(id);
+    let addBtn = <HTMLElement>getByID("addButton");
+    // Execute a function when the user presses a key on the keyboard
+    input.addEventListener("keyup", function(event){
+        // If the user presses the "Enter" key on the keyboard
+        if (event.key === "Enter") {
+            // Cancel the default action, if needed
+            event.preventDefault();
+            // Trigger the button element with a click
+            addBtn.click();
+        }
+
+        if (event.key === "Escape") {
+            // Cancel the default action, if needed
+            event.preventDefault();
+            // Reset the form
+            (<HTMLFormElement>getByID("myForm")).reset();
+            clearErrMsg();
+        }
+    });
+}
+
+/**
  * add product to database when all conditions are met
  */
-function addProduct(){
+function addProduct():void{
     addInputEventToClearErrors();
     if (isAllDataValid()){
         clearErrMsg();

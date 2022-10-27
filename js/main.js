@@ -7,10 +7,28 @@ var legendCount = 0;
 var productCount = 0;
 var ulErrCount = 0;
 window.onload = function () {
-    var addBtn = document.getElementById("addButton");
+    var addBtn = getByID("addButton");
     addBtn.addEventListener("click", clearErrMsg);
     addBtn.addEventListener("click", addProduct);
+    specialKeyEventListener("product-name");
+    specialKeyEventListener("product-price");
+    specialKeyEventListener("expiration-date");
 };
+function specialKeyEventListener(id) {
+    var input = getByID(id);
+    var addBtn = getByID("addButton");
+    input.addEventListener("keyup", function (event) {
+        if (event.key === "Enter") {
+            event.preventDefault();
+            addBtn.click();
+        }
+        if (event.key === "Escape") {
+            event.preventDefault();
+            getByID("myForm").reset();
+            clearErrMsg();
+        }
+    });
+}
 function addProduct() {
     addInputEventToClearErrors();
     if (isAllDataValid()) {

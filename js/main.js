@@ -8,10 +8,11 @@ var productCount = 0;
 var ulErrCount = 0;
 window.onload = function () {
     var addBtn = document.getElementById("addButton");
-    addBtn.onclick = clearErrMsg;
-    addBtn.onclick = addProduct;
+    addBtn.addEventListener("click", clearErrMsg);
+    addBtn.addEventListener("click", addProduct);
 };
 function addProduct() {
+    addInputEventToClearErrors();
     if (isAllDataValid()) {
         clearErrMsg();
         var product = getBabyProduct();
@@ -25,17 +26,22 @@ function isAllDataValid() {
     addInputEventToClearErrors();
     var productName = getByID("product-name").value.trim();
     var productPrice = getByID("product-price").value.trim();
+    var productRating = getByID("product-rating").value.trim();
     var expirationDate = getByID("expiration-date").value.trim();
     if (productName !== ""
         && productPrice !== ""
         && !isNaN(parseFloat(productPrice))
         && parseFloat(productPrice) > 0
+        && productRating !== "Please choose a rating"
         && isValidDate(expirationDate)) {
         return true;
     }
     else {
         if (!isValidDate(expirationDate)) {
             createErrLI("validationUL", "Format should be mm/dd/yyyy");
+        }
+        if (productRating == "Please choose a rating") {
+            createErrLI("validationUL", "You must choose Product Rating");
         }
         if (productPrice == "") {
             createErrLI("validationUL", "Product Price can't be empty!");
@@ -71,7 +77,7 @@ function createErrorDisplay() {
     while (ulErrCount == 0) {
         var createUL = document.createElement("ul");
         createUL.setAttribute("id", "validationUL");
-        createUL.setAttribute("style", "color:red; text-align: center;");
+        createUL.setAttribute("style", "color:red; margin-left: 100px;");
         validationDiv.appendChild(createUL);
         ulErrCount++;
     }
@@ -90,6 +96,7 @@ function addInputEventToClearErrors() {
     getByID("product-name").addEventListener("input", clearErrMsg);
     getByID("product-price").addEventListener("input", clearErrMsg);
     getByID("expiration-date").addEventListener("input", clearErrMsg);
+    getByID("addButton").addEventListener("click", clearErrMsg);
 }
 function displayProduct(myProduct) {
     createDisplayFrame();
@@ -97,14 +104,12 @@ function displayProduct(myProduct) {
     var ulID = "ul-" + productCount;
     var createUL = document.createElement("ul");
     createUL.setAttribute("id", ulID);
+    createUL.setAttribute("style", "color:blue; margin-left: 70px;");
     displayDiv.appendChild(createUL);
     displayDiv.insertBefore(createUL, displayDiv.children[0]);
     var orderOptions = "online and in store.";
     if (myProduct.isOnlineOnly) {
         orderOptions = "online only.";
-    }
-    if (myProduct.productRating == "Please choose a rating") {
-        myProduct.productRating = "Rating being updated";
     }
     var productCountStr = productCount.toString();
     createLI(ulID, "Product Sequence: ", productCountStr);

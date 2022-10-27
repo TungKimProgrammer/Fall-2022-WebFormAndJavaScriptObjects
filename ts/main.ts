@@ -13,14 +13,24 @@ var ulErrCount = 0;
 
 window.onload = function(){
     let addBtn = <HTMLElement>document.getElementById("addButton");
-    addBtn.onclick = clearErrMsg;
-    addBtn.onclick = addProduct;
+    //addBtn.onclick = addProduct;
+
+    addBtn.addEventListener("click", clearErrMsg);
+    addBtn.addEventListener("click", addProduct);
+
+/*
+    addBtn.onclick = () => {
+        clearErrMsg();
+        addProduct();
+    }
+*/
 }
 
 /**
  * add product to database when all conditions are met
  */
 function addProduct(){
+    addInputEventToClearErrors();
     if (isAllDataValid()){
         clearErrMsg();
         let product = getBabyProduct();
@@ -28,13 +38,6 @@ function addProduct(){
         displayProduct(product);
         (<HTMLFormElement>getByID("myForm")).reset();
     }
-
-    /*
-    // prevents displaying repeated error messages
-    if (getByID("validationUL").getElementsByTagName("li").length > 3){
-        clearErrMsg();
-    }
-    */
 }
 
 /**
@@ -46,18 +49,24 @@ function isAllDataValid():boolean{
     addInputEventToClearErrors();
     let productName = (<HTMLInputElement>getByID("product-name")).value.trim();
     let productPrice = (<HTMLInputElement>getByID("product-price")).value.trim();
+    let productRating = (<HTMLSelectElement>getByID("product-rating")).value.trim();
     let expirationDate = (<HTMLInputElement>getByID("expiration-date")).value.trim();
     
     if ( productName !== "" 
         && productPrice !== "" 
         && !isNaN(parseFloat(productPrice)) 
         && parseFloat(productPrice) > 0 
+        && productRating !== "Please choose a rating"
         && isValidDate(expirationDate)) {
         return true;
     }
     else{
         if (!isValidDate(expirationDate)){
             createErrLI("validationUL", "Format should be mm/dd/yyyy");
+        }
+
+        if (productRating == "Please choose a rating") {
+            createErrLI("validationUL", "You must choose Product Rating");
         }
 
         if (productPrice == "") {
@@ -134,7 +143,7 @@ function createErrorDisplay():void{
         // create and add ul list with product details 
         let createUL = document.createElement("ul");
         createUL.setAttribute("id", "validationUL");
-        createUL.setAttribute("style", "color:red; text-align: center;");
+        createUL.setAttribute("style", "color:red; margin-left: 100px;");
 
         validationDiv.appendChild(createUL);  
                 
@@ -169,6 +178,7 @@ function clearErrMsg():void{
     getByID("product-name").addEventListener("input", clearErrMsg);
     getByID("product-price").addEventListener("input", clearErrMsg);
     getByID("expiration-date").addEventListener("input", clearErrMsg);
+    getByID("addButton").addEventListener("click", clearErrMsg);
 }
 
 // display Product
@@ -182,6 +192,7 @@ function displayProduct(myProduct:BabyProduct):void{
     let ulID = "ul-" + productCount;  
     let createUL = document.createElement("ul");
     createUL.setAttribute("id", ulID);
+    createUL.setAttribute("style", "color:blue; margin-left: 70px;");
     displayDiv.appendChild(createUL);
     
     // insert this product to top of display
@@ -190,10 +201,6 @@ function displayProduct(myProduct:BabyProduct):void{
     let orderOptions = "online and in store.";
     if (myProduct.isOnlineOnly){
         orderOptions = "online only.";
-    }
-
-    if (myProduct.productRating == "Please choose a rating"){
-        myProduct.productRating = "Rating being updated";
     }
 
     let productCountStr = productCount.toString();

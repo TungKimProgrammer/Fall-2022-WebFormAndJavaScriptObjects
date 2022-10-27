@@ -16,7 +16,7 @@
     </div>
 
     <form action="">
-        <fieldset>
+        <fieldset id="add-product">
             <legend>
                 Product
             </legend>
@@ -33,11 +33,11 @@
                 <label for="product-rating">Product Rating</label>
                 <select name="product-rating" id="product-rating">
                     <option>Please choose a rating</option>
-                    <option value="5">&#9733;&#9733;&#9733;&#9733;&#9733;</option>
-                    <option value="4">&#9733;&#9733;&#9733;&#9733;</option>
-                    <option value="3">&#9733;&#9733;&#9733;</option>
-                    <option value="2">&#9733;&#9733;</option>
-                    <option value="1">&#9733;</option>
+                    <option value="★★★★★">&#9733;&#9733;&#9733;&#9733;&#9733;</option>
+                    <option value="★★★★☆">&#9733;&#9733;&#9733;&#9733;&#9734;</option>
+                    <option value="★★★☆☆">&#9733;&#9733;&#9733;&#9734;&#9734;</option>
+                    <option value="★★☆☆☆">&#9733;&#9733;&#9734;&#9734;&#9734;</option>
+                    <option value="★☆☆☆☆">&#9733;&#9734;&#9734;&#9734;&#9734;</option>
                 </select>
                 <br>
     
@@ -54,11 +54,10 @@
                 <button id="addButton" type="button" value="Add Product">Add New Baby Product</button>
             </div>
 
-            <div id="display-error-msg">
-
-            </div>
+            
 
         </fieldset>
+        <br>
         
 
     </form>

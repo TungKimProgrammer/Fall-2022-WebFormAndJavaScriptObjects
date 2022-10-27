@@ -14,6 +14,9 @@ myProduct.productRating = "★★★★★";
 myProduct.expirationDate = "01/03/2024";
 myProduct.isOnlineOnly = false;
 
+var legendCount = 0;
+var productCount = 0;
+
 window.onload = function(){
     let addBtn = <HTMLElement>document.getElementById("addButton");
     addBtn.onclick = addProduct;
@@ -22,13 +25,114 @@ window.onload = function(){
 function addProduct(){
     if (isAllDataValid()){
         let product = getBabyProduct();
+        productCount++;
         displayProduct(product);
     }
 }
 
 // display Product
 function displayProduct(myProduct:BabyProduct):void{
-    // TO DO: Display Product below the form
+    // create a fieldset to display products added
+    createDisplayFrame();
+
+    let displayDiv = getByID("display-div");
+
+    
+
+    // create <h2> for Product Name
+    let productHeading = document.createElement("h2");
+    productHeading.innerText = myProduct.productName;
+        
+/*
+    // create paragraph with product details
+    let productInfo = document.createElement("p");
+    let orderOptions = "online and in store.";
+    if (myProduct.isOnlineOnly){
+        orderOptions = "online only.";
+    }
+    productInfo.innerText = myProduct.productName 
+                          + " has a rating of " + myProduct.productRating
+                          + ". It costs $" + myProduct.productPrice
+                          + ". Available " + orderOptions;
+*/
+    // add <h2> in the <div id="display-error-msg">
+    displayDiv.appendChild(productHeading);
+
+    // add <p> for productInfo in the <div id="display-error-msg">
+    // displayDiv.appendChild(productInfo);
+
+    // create and add ul list with product details    
+    let createUL = document.createElement("ul");
+    createUL.setAttribute("id", "ul-" + productCount);
+    displayDiv.appendChild(createUL);
+    
+    // insert this product to top of display
+    displayDiv.insertBefore(createUL, displayDiv.children[0]);
+
+    let orderOptions = "online and in store.";
+    if (myProduct.isOnlineOnly){
+        orderOptions = "online only.";
+    }
+
+    if (myProduct.productRating == "Please choose a rating"){
+        myProduct.productRating = "Rating being updated";
+    }
+
+    let productCountStr = productCount.toString();
+
+    createLI(productCountStr, "Product Sequence: ", productCountStr);
+    createLI(productCountStr, "Product Name: ", myProduct.productName);
+    createLI(productCountStr, "Product Price: $", myProduct.productPrice.toString());
+    createLI(productCountStr, "Product Rating: ", myProduct.productRating);
+    createLI(productCountStr, "Expiration Date: ", myProduct.expirationDate);
+    createLI(productCountStr, "Product Available: ", orderOptions);
+    createLI(productCountStr, "-----------------------", "-----------------------");
+    /*
+    let createLI = document.createElement("LI");
+    let createLINote = document.createTextNode("Product Name: " + myProduct.productName);
+    createLI.appendChild(createLINote);
+    getByID("ul-"+productCount).appendChild(createLI);
+    */
+
+    /*
+    productInfo.innerText = myProduct.productName 
+                          + " has a rating of " + myProduct.productRating
+                          + ". It costs $" + myProduct.productPrice
+                          + ". Available " + orderOptions;
+    */
+}
+
+function createLI(id: string, a:string, b:string):void {
+    let createLI = document.createElement("LI");
+    let createLINote = document.createTextNode(a + b);
+    createLI.appendChild(createLINote);
+    getByID("ul-" + id).appendChild(createLI);
+}
+
+function createDisplayFrame():void{
+    while (legendCount == 0){
+        // create and add fieldset to form to display Products
+        let createFieldset = document.createElement("FIELDSET");
+        document.body.appendChild(createFieldset).setAttribute("id","display-fieldset");
+        
+        let inventoryFieldset = getByID("display-fieldset");
+
+        // create <legend>Inventory</legend>
+        // add <legend>Inventory</legend> in the <fieldset id="inventory">
+        let createLegend = document.createElement("LEGEND");
+        let createTitle = document.createTextNode("Products added:");
+
+        createLegend.appendChild(createTitle);
+
+        inventoryFieldset.appendChild(createLegend)
+                         .setAttribute("id","display-legend");
+
+        let createDiv = document.createElement("div");
+        inventoryFieldset.appendChild(createDiv)
+                         .setAttribute("id","display-div");
+            
+        legendCount++;
+    }
 }
 
 // add validation code
@@ -52,7 +156,7 @@ function getBabyProduct():BabyProduct{
     product.productName = (<HTMLInputElement>getByID("product-name")).value;
     product.productPrice = parseFloat((<HTMLInputElement>getByID("product-price")).value);
     product.productRating = (<HTMLSelectElement>getByID("product-rating")).value;
-    product.expirationDate = getValidDate("product-date");
+    product.expirationDate = getValidDate("expiration-date");
 
     let onlineOnly = <HTMLInputElement>getByID("online-only");
     product.isOnlineOnly = onlineOnly.checked;
@@ -92,10 +196,11 @@ function getValidDate(id:string):string {
     let dateBox = <HTMLInputElement>getByID(id);
     let dateBoxValue = dateBox.value;
 
+    /*
     if (!isValidDate(dateBoxValue)) {
         let errSpan = dateBox.nextElementSibling;
         errSpan.innerHTML = "Format should be mm/dd/yyyy";
     }
-
+    */
     return dateBoxValue;
 }

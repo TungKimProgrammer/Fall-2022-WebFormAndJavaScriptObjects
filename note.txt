@@ -1,0 +1,31 @@
+Hi Joe,
+This quarter I have to learn more advanced skills from all classes and somehow
+they over cross and make me confused.
+
+I have some confusion in my work.
+
+in function isAllDataValid(),
+I have to get all values from the input to validate the data.
+
+In getBabyProduct(), I have to do the same thing, but with the 'product.' 
+
+Can I call all values in the main and then in getBabyProduct(), I set
+	product.productName = productName;
+
+I am trying to use ul to show error messages.
+I have learned and been practicing doing everything in TS/JS without touching HTML
+and it's kind of amazing.
+
+One thing, when I click on the button leaving all textbox empty again and again, 
+it keeps adding error messages.
+
+Then, I added this code (it doesn't look good) in addProduct():  
+    // prevents displaying repeated error messages
+    if (getByID("validationUL").getElementsByTagName("li").length > 3){
+        clearErrMsg();
+    }
+It clears the entire err msg ul, and it displays err msg again when the button clicked again
+
+What should I do to clear the err msg without adding the above code? 
+
+

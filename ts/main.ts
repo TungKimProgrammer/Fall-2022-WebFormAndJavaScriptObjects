@@ -6,7 +6,8 @@ class BabyProduct{
     isOnlineOnly: boolean;
 }
 
-var legendCount = 0;
+// use count to prevent adding too much
+var legendCount = 0; 
 var productCount = 0;
 var ulErrCount = 0;
 
@@ -20,8 +21,6 @@ window.onload = function(){
  * add product to database when all conditions are met
  */
 function addProduct(){
-    
-
     if (isAllDataValid()){
         clearErrMsg();
         let product = getBabyProduct();
@@ -30,10 +29,12 @@ function addProduct(){
         (<HTMLFormElement>getByID("myForm")).reset();
     }
 
+    /*
     // prevents displaying repeated error messages
     if (getByID("validationUL").getElementsByTagName("li").length > 3){
         clearErrMsg();
     }
+    */
 }
 
 /**
@@ -72,8 +73,6 @@ function isAllDataValid():boolean{
 
         return false;
     }
-    
-    
 }
 
 /**
@@ -92,10 +91,10 @@ function getBabyProduct():BabyProduct{
     let product = new BabyProduct();
 
     // Populate with data from the form
-    product.productName = (<HTMLInputElement>getByID("product-name")).value;
-    product.productPrice = parseFloat((<HTMLInputElement>getByID("product-price")).value);
-    product.productRating = (<HTMLSelectElement>getByID("product-rating")).value;
-    product.expirationDate = getValidDate("expiration-date");
+    product.productName = (<HTMLInputElement>getByID("product-name")).value.trim();
+    product.productPrice = parseFloat((<HTMLInputElement>getByID("product-price")).value.trim());
+    product.productRating = (<HTMLSelectElement>getByID("product-rating")).value.trim();
+    product.expirationDate = (<HTMLInputElement>getByID("expiration-date")).value.trim();
 
     let onlineOnly = <HTMLInputElement>getByID("online-only");
     product.isOnlineOnly = onlineOnly.checked;
@@ -124,23 +123,6 @@ function isValidDate(input: string):boolean{
     let pattern = /^\d{1,2}\/\d{1,2}\/\d{4}$/g;
 
     return pattern.test(input);
-}
-
-/**
- * get the valid date from date input
- * @param id of the date input textbox
- * @returns valid date from input textbox
- */
-function getValidDate(id:string):string {
-    let dateBox = <HTMLInputElement>getByID(id);
-    let dateBoxValue = dateBox.value;
-
-    
-    if (!isValidDate(dateBoxValue)) {
-        createErrLI("validationUL", "Format should be mm/dd/yyyy");
-    }
-    
-    return dateBoxValue;
 }
 
 /**
@@ -186,6 +168,7 @@ function clearErrMsg():void{
  function addInputEventToClearErrors() {
     getByID("product-name").addEventListener("input", clearErrMsg);
     getByID("product-price").addEventListener("input", clearErrMsg);
+    getByID("expiration-date").addEventListener("input", clearErrMsg);
 }
 
 // display Product

@@ -3,33 +3,97 @@ var BabyProduct = (function () {
     }
     return BabyProduct;
 }());
-var myProduct = new BabyProduct();
-myProduct.productName = "Similac";
-myProduct.productPrice = 29;
-myProduct.productRating = "★★★★★";
-myProduct.expirationDate = "01/03/2024";
-myProduct.isOnlineOnly = false;
 var legendCount = 0;
 var productCount = 0;
 var ulErrCount = 0;
 window.onload = function () {
     var addBtn = document.getElementById("addButton");
+    addBtn.onclick = clearErrMsg;
     addBtn.onclick = addProduct;
 };
 function addProduct() {
     if (isAllDataValid()) {
+        clearErrMsg();
         var product = getBabyProduct();
         productCount++;
         displayProduct(product);
         getByID("myForm").reset();
     }
 }
+function isAllDataValid() {
+    createErrorDisplay();
+    addInputEventToClearErrors();
+    var productName = getByID("product-name").value.trim();
+    var productPrice = getByID("product-price").value.trim();
+    var expirationDate = getByID("expiration-date").value.trim();
+    if (productName !== ""
+        && productPrice !== ""
+        && !isNaN(parseFloat(productPrice))
+        && parseFloat(productPrice) > 0
+        && isValidDate(expirationDate)) {
+        return true;
+    }
+    else {
+        if (!isValidDate(expirationDate)) {
+            createErrLI("validationUL", "Format should be mm/dd/yyyy");
+        }
+        if (productPrice == "") {
+            createErrLI("validationUL", "Product Price can't be empty!");
+        }
+        else if (isNaN(parseFloat(productPrice)) || parseFloat(productPrice) <= 0) {
+            createErrLI("validationUL", "Product Price must be a valid number!");
+        }
+        if (productName == "") {
+            createErrLI("validationUL", "Product Name can't be empty!");
+        }
+        return false;
+    }
+}
+function getByID(id) {
+    return document.getElementById(id);
+}
+function getBabyProduct() {
+    var product = new BabyProduct();
+    product.productName = getByID("product-name").value.trim();
+    product.productPrice = parseFloat(getByID("product-price").value.trim());
+    product.productRating = getByID("product-rating").value.trim();
+    product.expirationDate = getByID("expiration-date").value.trim();
+    var onlineOnly = getByID("online-only");
+    product.isOnlineOnly = onlineOnly.checked;
+    return product;
+}
+function isValidDate(input) {
+    var pattern = /^\d{1,2}\/\d{1,2}\/\d{4}$/g;
+    return pattern.test(input);
+}
+function createErrorDisplay() {
+    var validationDiv = getByID("error-div");
+    while (ulErrCount == 0) {
+        var createUL = document.createElement("ul");
+        createUL.setAttribute("id", "validationUL");
+        createUL.setAttribute("style", "color:red; text-align: center;");
+        validationDiv.appendChild(createUL);
+        ulErrCount++;
+    }
+}
+function createErrLI(id, s) {
+    var createLI = document.createElement("LI");
+    var createLINote = document.createTextNode(s);
+    createLI.appendChild(createLINote);
+    getByID(id).appendChild(createLI);
+    getByID(id).insertBefore(createLI, getByID(id).children[0]);
+}
+function clearErrMsg() {
+    getByID("validationUL").innerHTML = '';
+}
+function addInputEventToClearErrors() {
+    getByID("product-name").addEventListener("input", clearErrMsg);
+    getByID("product-price").addEventListener("input", clearErrMsg);
+    getByID("expiration-date").addEventListener("input", clearErrMsg);
+}
 function displayProduct(myProduct) {
     createDisplayFrame();
     var displayDiv = getByID("display-div");
-    var productHeading = document.createElement("h2");
-    productHeading.innerText = myProduct.productName;
-    displayDiv.appendChild(productHeading);
     var ulID = "ul-" + productCount;
     var createUL = document.createElement("ul");
     createUL.setAttribute("id", ulID);
@@ -71,50 +135,5 @@ function createDisplayFrame() {
         inventoryFieldset.appendChild(createDiv)
             .setAttribute("id", "display-div");
         legendCount++;
-    }
-}
-function isAllDataValid() {
-    return true;
-}
-function getByID(id) {
-    return document.getElementById(id);
-}
-function getBabyProduct() {
-    var product = new BabyProduct();
-    product.productName = getByID("product-name").value;
-    product.productPrice = parseFloat(getByID("product-price").value);
-    product.productRating = getByID("product-rating").value;
-    product.expirationDate = getValidDate("expiration-date");
-    var onlineOnly = getByID("online-only");
-    product.isOnlineOnly = onlineOnly.checked;
-    return product;
-}
-function isValidDate(input) {
-    var pattern = /^\d{1,2}\/\d{1,2}\/\d{4}$/g;
-    return pattern.test(input);
-}
-function getValidDate(id) {
-    var dateBox = getByID(id);
-    var dateBoxValue = dateBox.value;
-    if (!isValidDate(dateBoxValue)) {
-        var errSpan = dateBox.nextElementSibling;
-        errSpan.innerHTML = "Format should be mm/dd/yyyy";
-    }
-    return dateBoxValue;
-}
-function createErrorDisplay() {
-    while (ulErrCount == 0) {
-        var createFieldset = document.createElement("FIELDSET");
-        document.body.appendChild(createFieldset).setAttribute("id", "display-fieldset");
-        var inventoryFieldset = getByID("display-fieldset");
-        var createLegend = document.createElement("LEGEND");
-        var createTitle = document.createTextNode("Products added:");
-        createLegend.appendChild(createTitle);
-        inventoryFieldset.appendChild(createLegend)
-            .setAttribute("id", "display-legend");
-        var createDiv = document.createElement("div");
-        inventoryFieldset.appendChild(createDiv)
-            .setAttribute("id", "display-div");
-        ulErrCount++;
     }
 }

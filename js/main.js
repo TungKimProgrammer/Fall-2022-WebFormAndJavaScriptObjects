@@ -146,14 +146,15 @@ function addInputEventToClearErrors() {
 function displayProduct(myProduct) {
     createDisplayFrame();
     let displayDiv = getByID("display-div");
-    displayDiv.setAttribute("style", "display: flex; \
-                                      justify-content: center;");
+    displayDiv.setAttribute("style", "text-align: center;");
     let ulID = "ul-" + productCount;
     let createUL = document.createElement("ul");
     createUL.setAttribute("id", ulID);
     createUL.setAttribute("style", "color:blue; \
-                                    text-align:left; \
-                                    display: inline-block;");
+                                    display: inline-block; \
+                                    text-align: left; \
+                                    width: 80%; \
+                                    margin: auto; ");
     displayDiv.appendChild(createUL);
     displayDiv.insertBefore(createUL, displayDiv.children[0]);
     let orderOptions = "online and in store.";
@@ -181,7 +182,7 @@ function createLI(id, a, b) {
     let createLI = document.createElement("LI");
     let createLINote = document.createTextNode(a + b);
     createLI.appendChild(createLINote);
-    getByID(id).appendChild(createLI);
+    getByID(id).appendChild(createLI).setAttribute("width", "100%");
 }
 function createDisplayFrame() {
     while (legendCount == 0) {

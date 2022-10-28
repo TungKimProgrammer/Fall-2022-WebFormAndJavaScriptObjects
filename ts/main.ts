@@ -278,16 +278,17 @@ function displayProduct(myProduct:BabyProduct):void{
     createDisplayFrame();
 
     let displayDiv = getByID("display-div");
-    displayDiv.setAttribute("style", "display: flex; \
-                                      justify-content: center;");
+    displayDiv.setAttribute("style", "text-align: center;");
 
     // create and add ul list with product details 
     let ulID = "ul-" + productCount;  
     let createUL = document.createElement("ul");
     createUL.setAttribute("id", ulID);
     createUL.setAttribute("style", "color:blue; \
-                                    text-align:left; \
-                                    display: inline-block;");
+                                    display: inline-block; \
+                                    text-align: left; \
+                                    width: 80%; \
+                                    margin: auto; ");
     displayDiv.appendChild(createUL);
     
     // insert this product to top of display
@@ -311,6 +312,8 @@ function displayProduct(myProduct:BabyProduct):void{
 
     // change word "expired" to red color
     changeTextColor(ulID, "expired!", "EXPIRED!", "red"); 
+
+
     
 }
 
@@ -333,11 +336,11 @@ function changeTextColor(id:string, wordToChange:string, newWord:string, color:s
  * @param a Title/Field such as Product Name
  * @param b name of specific product
  */
-function createLI(id: string, a:string, b:string):void {
+function createLI(id: string, a:string, b:string){
     let createLI = document.createElement("LI");
     let createLINote = document.createTextNode(a + b);
     createLI.appendChild(createLINote);
-    getByID(id).appendChild(createLI);
+    getByID(id).appendChild(createLI).setAttribute("width","100%");
 }
 
 /**

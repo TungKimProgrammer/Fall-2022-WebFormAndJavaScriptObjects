@@ -169,7 +169,6 @@ function getBabyProduct():BabyProduct{
     product.isOnlineOnly = onlineOnly.checked;
 
     return product;
-    
 }
 
 /**
@@ -258,7 +257,6 @@ function clearErrMsg():void{
     if (ulErrCount != 0){
         getByID("validationUL").innerHTML = "";
     }
-    
 }
 
 /**
@@ -269,7 +267,6 @@ function clearErrMsg():void{
     getByID("product-price").addEventListener("input", clearErrMsg);
     getByID("product-rating").addEventListener("input", clearErrMsg);
     getByID("expiration-date").addEventListener("input", clearErrMsg);
-    
 }
 
 // display Product
@@ -287,7 +284,7 @@ function displayProduct(myProduct:BabyProduct):void{
     createUL.setAttribute("style", "color:blue; \
                                     display: inline-block; \
                                     text-align: left; \
-                                    width: 80%; \
+                                    width: 70%; \
                                     margin: auto; ");
     displayDiv.appendChild(createUL);
     
@@ -312,9 +309,6 @@ function displayProduct(myProduct:BabyProduct):void{
 
     // change word "expired" to red color
     changeTextColor(ulID, "expired!", "EXPIRED!", "red"); 
-
-
-    
 }
 
 /** not Recommended as String.fontcolor() is deprecated in JavaScript.

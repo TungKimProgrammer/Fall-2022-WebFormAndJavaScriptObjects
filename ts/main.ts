@@ -320,7 +320,7 @@ function displayProduct(myProduct:BabyProduct):void{
 function changeTextColor(id:string, wordToChange:string, newWord:string, color:string){
     var element = getByID(id); 
     var originalHtml = element.innerHTML;
-    var newHtml = originalHtml.replace(new RegExp('\\b' + wordToChange + '\\b', "g"), newWord.fontcolor(color));
+    var newHtml = originalHtml.replace(new RegExp('\\' + wordToChange + '\\B', "g"), newWord.fontcolor(color));
     element.innerHTML = newHtml;
 }
 
@@ -334,7 +334,7 @@ function createLI(id: string, a:string, b:string){
     let createLI = document.createElement("LI");
     let createLINote = document.createTextNode(a + b);
     createLI.appendChild(createLINote);
-    getByID(id).appendChild(createLI).setAttribute("width","80%");
+    getByID(id).appendChild(createLI);
 }
 
 /**

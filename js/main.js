@@ -153,7 +153,7 @@ function displayProduct(myProduct) {
     createUL.setAttribute("style", "color:blue; \
                                     display: inline-block; \
                                     text-align: left; \
-                                    width: 80%; \
+                                    width: 70%; \
                                     margin: auto; ");
     displayDiv.appendChild(createUL);
     displayDiv.insertBefore(createUL, displayDiv.children[0]);

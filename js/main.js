@@ -182,7 +182,7 @@ function createLI(id, a, b) {
     let createLI = document.createElement("LI");
     let createLINote = document.createTextNode(a + b);
     createLI.appendChild(createLINote);
-    getByID(id).appendChild(createLI).setAttribute("width", "100%");
+    getByID(id).appendChild(createLI).setAttribute("width", "80%");
 }
 function createDisplayFrame() {
     while (legendCount == 0) {
